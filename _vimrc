@@ -29,7 +29,7 @@ autocmd BufRead,BufNewFile *.miC setlocal ft=C
 autocmd BufRead,BufNewFile *.g setlocal ft=antlr
 autocmd BufRead,BufNewFile *.rkt setlocal ft=scheme
 autocmd BufRead,BufNewFile *.[sS] setlocal ft=asm
-autocmd BufRead,BufNewFile *.[asm] setlocal ft=asm
+autocmd BufRead,BufNewFile *.asm setlocal ft=asm
 autocmd BufRead,BufNewFile SConstruct* setlocal ft=python tw=0
 autocmd BufRead,BufNewFile SConscript* setlocal ft=python tw=0
 
