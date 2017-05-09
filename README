@@ -1,0 +1,7 @@
+Use git clone to get a copy of this repo.
+Copy '_vimrc' and '_vim' into your home directory and rename them to '.vimrc'
+and '.vim' respectively. The config should work as-is in vim 7.4 or later.
+
+You might also want to use a 256-color terminal to look pretty.
+_vim/colors/mopkai.vim is a very slightly modified version of the original
+mopkai.vim colorscheme. I got it at https://github.com/flazz/vim-colorschemes.git
