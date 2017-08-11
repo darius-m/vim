@@ -11,7 +11,7 @@ autocmd FileType java		setlocal tw=78 cin foldmethod=marker
 autocmd FileType c,cpp		setlocal tw=72 cindent noexpandtab
 autocmd FileType python		setlocal autoindent expandtab sts=4 sw=4 tw=78
 autocmd FileType haskell	setlocal tw=72 sw=2 sts=2 et
-autocmd FileType tex		setlocal tw=72 sw=2 sts=2 ai et
+autocmd FileType tex		setlocal tw=72 sw=2 sts=2 ai et noexpandtab spell spelllang=en_us
 " 'linebreak' won't work without 'nolist'
 autocmd FileType creole		setlocal tw=0 fo=t wrap nolist linebreak
 autocmd FileType mail		setlocal tw=72 fo=tql
@@ -115,12 +115,6 @@ set list listchars=tab:»\ ,trail:·,extends:»,precedes:«
 map Q gq
 
 
-" Ripped off from Bee on vim_use mailing list
-" Space as PageDown like web browser
-nmap <Space> <PageDown>
-vmap <Space> <PageDown>
-" /ripoff
-
 " Highlight current line
 set cursorline
 
@@ -137,10 +131,11 @@ nnoremap <Tab> <C-W>w
 nnoremap <F9> :cope<CR>
 nnoremap <S-F9> :ccl<CR>
 
-nnoremap <F1> 1gt
-nnoremap <F2> 2gt
-nnoremap <F3> 3gt
-nnoremap <F4> 4gt
+nnoremap <F2> gT
+nnoremap <F3> gt
+
+nnoremap 4 $
+nnoremap 6 ^
 
 nnoremap <F5> :cp<CR>
 nnoremap <F6> :cn<CR>
@@ -213,3 +208,11 @@ endfunction
 
 " Enter key will select a list item, if a list is visible
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+
+" Enable recursive search
+set path+=**
+
+map <Left> <nop>
+map <Right> <nop>
+map <Up> <nop>
+map <down> <nop>
