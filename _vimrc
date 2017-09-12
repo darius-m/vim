@@ -8,7 +8,7 @@ imap jj <Esc>
 
 " Per-filetype settings
 autocmd FileType java		setlocal tw=78 cin foldmethod=marker
-autocmd FileType c,cpp		setlocal tw=72 cindent noexpandtab
+autocmd FileType c,cpp		setlocal tw=80 cindent noexpandtab
 autocmd FileType python		setlocal autoindent expandtab sts=4 sw=4 tw=78
 autocmd FileType haskell	setlocal tw=72 sw=2 sts=2 et
 autocmd FileType tex		setlocal tw=72 sw=2 sts=2 ai et noexpandtab spell spelllang=en_us
@@ -30,6 +30,7 @@ autocmd BufRead,BufNewFile *.g setlocal ft=antlr
 autocmd BufRead,BufNewFile *.rkt setlocal ft=scheme
 autocmd BufRead,BufNewFile *.[sS] setlocal ft=asm
 autocmd BufRead,BufNewFile *.asm setlocal ft=asm
+autocmd BufRead,BufNewFile Makefile.* setlocal ft=make
 autocmd BufRead,BufNewFile SConstruct* setlocal ft=python tw=0
 autocmd BufRead,BufNewFile SConscript* setlocal ft=python tw=0
 
@@ -59,7 +60,6 @@ set statusline=%<%f\ %y%h%m%r%=%-24.(0x%02B,%l/%L,%c%V%)\ %P
 set laststatus=2
 set wildmenu
 
-set expandtab
 set softtabstop=4
 " /ripoff
 
@@ -68,12 +68,24 @@ if has("cscope")
         " Look for a 'cscope.out' file starting from the current directory,
         " going up to the root directory.
         let s:dirs = split(getcwd(), "/")
+        let s:cscope = 0
+        let s:ctags = 0
         while s:dirs != []
                 let s:path = "/" . join(s:dirs, "/")
-                if (filereadable(s:path . "/cscope.out"))
+                if (s:cscope == 0 && filereadable(s:path . "/cscope.out"))
                         execute "cs add " . s:path . "/cscope.out " . s:path . " -v"
+                        let s:cscope = 1
+                endif
+
+                if (s:ctags == 0 && filereadable(s:path . "/tags"))
+                        execute "set tags=" . s:path . "/tags"
+                        let s:ctags = 1
+                endif
+
+                if (s:cscope == 1 && s:ctags == 1)
                         break
                 endif
+
                 let s:dirs = s:dirs[:-2]
         endwhile
 
@@ -103,17 +115,13 @@ if has("cscope")
         set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
 endif
 
-" Add ctags support
-set tags=<distro-dir>/tags
-
 " More tabs -- we have enough memory.
 set tabpagemax=20
 
 " Mark tabs and spaces
-set list listchars=tab:»\ ,trail:·,extends:»,precedes:«
+set list listchars=tab:>\ ,
 
 map Q gq
-
 
 " Highlight current line
 set cursorline
@@ -131,18 +139,17 @@ nnoremap <Tab> <C-W>w
 nnoremap <F9> :cope<CR>
 nnoremap <S-F9> :ccl<CR>
 
+nnoremap - gT
+nnoremap = gt
 nnoremap <F2> gT
 nnoremap <F3> gt
-
-nnoremap 4 $
-nnoremap 6 ^
 
 nnoremap <F5> :cp<CR>
 nnoremap <F6> :cn<CR>
 
 " Set folding options
 autocmd ColorScheme * highlight Folded ctermbg=black ctermfg=41
-set foldlevel=3
+set foldlevel=5
 " Fold methods and structures automatically
 set foldmethod=syntax
 
@@ -185,13 +192,8 @@ colorscheme mopkai
 
 set mouse=a
 set completeopt=longest,menuone
-set number
+set number relativenumber
 set colorcolumn=80
-
-" Highlight trailing whitespaces
-highlight UselessWhitespace ctermbg=darkred
-match UselessWhitespace /\s\+$/
-autocmd ColorScheme * highlight UselessWhitespace ctermbg=darkred
 
 " Aid to help with hex editing
 command -bar Hex call ToggleHex()
@@ -216,3 +218,8 @@ map <Left> <nop>
 map <Right> <nop>
 map <Up> <nop>
 map <down> <nop>
+
+" Highlight trailing whitespaces
+highlight UselessWhitespace ctermbg=darkred
+match UselessWhitespace /\s\+$/
+autocmd ColorScheme * highlight UselessWhitespace ctermbg=darkred
