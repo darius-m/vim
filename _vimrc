@@ -147,6 +147,9 @@ nnoremap <F3> gt
 nnoremap <F5> :cp<CR>
 nnoremap <F6> :cn<CR>
 
+vnoremap <C-k> :<C-u>silent! '<,'>m '<-2<CR>`[V`]
+vnoremap <C-j> :<C-u>silent! '<,'>m '>+1<CR>`[V`]
+
 " Set folding options
 autocmd ColorScheme * highlight Folded ctermbg=black ctermfg=41
 set foldlevel=5
