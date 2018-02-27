@@ -136,7 +136,7 @@ set ignorecase
 syntax on
 
 nnoremap <Tab> <C-W>w
-nnoremap <F9> :cope<CR>
+nnoremap <F9> :cwindow<CR>
 nnoremap <S-F9> :ccl<CR>
 
 nnoremap - gT
@@ -193,7 +193,7 @@ augroup END
 set t_Co=256
 colorscheme mopkai
 
-set mouse=a
+set mouse=i
 set completeopt=longest,menuone
 set number relativenumber
 set colorcolumn=80
@@ -216,11 +216,6 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 " Enable recursive search
 set path+=**
-
-map <Left> <nop>
-map <Right> <nop>
-map <Up> <nop>
-map <down> <nop>
 
 " Highlight trailing whitespaces
 highlight UselessWhitespace ctermbg=darkred
