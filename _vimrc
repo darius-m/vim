@@ -202,7 +202,6 @@ set colorcolumn=80
 command -bar Hex call ToggleHex()
 function ToggleHex()
         if !exists("b:editHex") || !b:editHex
-                setlocal binary
                 let b:editHex=1
                 %!xxd
         else
