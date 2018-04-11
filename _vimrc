@@ -1,3 +1,6 @@
+" Force use of utf-8
+set encoding=utf-8
+
 " Add modeline functionality -- it's disabled by default on some distros
 set modeline
 
@@ -119,7 +122,7 @@ endif
 set tabpagemax=20
 
 " Mark tabs and spaces
-set list listchars=tab:>\ ,
+set list listchars=tab:᚛·,
 
 map Q gq
 
@@ -161,9 +164,9 @@ set foldmethod=syntax
 nnoremap <C-f> za
 inoremap <C-f> <esc>zc
 " Toggle foldings file-wide using C-g;
-" if used in insert mode, first return to insert mode
+" if used in insert mode, first return to normal mode
 nnoremap <C-g> :call ToggleFileFolds()<CR>
-inoremap <C-g> <esc>:call ToggleFileFolds()<CR>
+inoremap <C-g> <esc>:call ToggleFileFolds()<CR>i
 
 function ToggleFileFolds()
         if &foldlevel == 0
