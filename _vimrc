@@ -105,17 +105,17 @@ if has("cscope")
         nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
         nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
 
-        nmap <C-@>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
-        nmap <C-@>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
-        nmap <C-@>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
-        nmap <C-@>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
-        nmap <C-@>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
-        nmap <C-@>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
-        nmap <C-@>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-        nmap <C-@>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+        nmap <C-\|>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
+        nmap <C-\|>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
+        nmap <C-\|>c :vert scs find c <C-R>=expand("<cword>")<CR><CR>
+        nmap <C-\|>t :vert scs find t <C-R>=expand("<cword>")<CR><CR>
+        nmap <C-\|>e :vert scs find e <C-R>=expand("<cword>")<CR><CR>
+        nmap <C-\|>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
+        nmap <C-\|>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+        nmap <C-\|>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
 
         " Open a quickfix window for the following queries.
-        set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
+        "set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
 endif
 
 " More tabs -- we have enough memory.
@@ -138,9 +138,8 @@ set ignorecase
 
 syntax on
 
-nnoremap <Tab> <C-W>w
 nnoremap <F9> :cwindow<CR>
-nnoremap <S-F9> :ccl<CR>
+nnoremap <F10> :ccl<CR>
 
 nnoremap - gT
 nnoremap = gt
@@ -150,8 +149,12 @@ nnoremap <F3> gt
 nnoremap <F5> :cp<CR>
 nnoremap <F6> :cn<CR>
 
+nnoremap <C-s> nop
+
 vnoremap <C-k> :<C-u>silent! '<,'>m '<-2<CR>`[V`]
 vnoremap <C-j> :<C-u>silent! '<,'>m '>+1<CR>`[V`]
+
+nnoremap <silent> <leader>, :noh<cr>
 
 " Set folding options
 autocmd ColorScheme * highlight Folded ctermbg=black ctermfg=41
@@ -159,6 +162,7 @@ set foldlevel=5
 " Fold methods and structures automatically
 set foldmethod=syntax
 
+nmap , <leader>
 " Toggle folding under the cursor using C-f;
 " if in insert mode, return to normal and close fold
 nnoremap <C-f> za
@@ -167,6 +171,26 @@ inoremap <C-f> <esc>zc
 " if used in insert mode, first return to normal mode
 nnoremap <C-g> :call ToggleFileFolds()<CR>
 inoremap <C-g> <esc>:call ToggleFileFolds()<CR>i
+" Make [[ go a little bit further back than the beginning accolade of
+" a function, hopefully finding the function name
+nnoremap <silent> [[ [[:call search('^[[:alpha:]_]', 'bc')<CR>
+" Go to previous buffer when deleting the buffer in stead of killing the
+" current split (or tab)
+nnoremap <silent> <leader>b :bp\|bd#<CR>
+
+" Make ci\X and di\X commands act similar to ci" and di" respectively
+nnoremap <silent> ci( hf(ci(
+nnoremap <silent> ci[ hf[ci[
+nnoremap <silent> ci{ hf{ci{
+nnoremap <silent> di( hf(di(
+nnoremap <silent> di[ hf[di[
+nnoremap <silent> di{ hf{di{
+
+" Make also C-w work in insert mode
+inoremap <silent> <C-w>h <C-o><C-w>h
+inoremap <silent> <C-w>j <C-o><C-w>j
+inoremap <silent> <C-w>k <C-o><C-w>k
+inoremap <silent> <C-w>l <C-o><C-w>l
 
 function ToggleFileFolds()
         if &foldlevel == 0
@@ -206,12 +230,15 @@ command -bar Hex call ToggleHex()
 function ToggleHex()
         if !exists("b:editHex") || !b:editHex
                 let b:editHex=1
-                %!xxd
+                %!xxd -g1
         else
                 let b:editHex=0
                 %!xxd -r
         endif
 endfunction
+
+command -bar GitBlame execute '!git blame "%" -L ' . line(".") . ',' . line(".")
+nnoremap <leader>g :GitBlame<CR>
 
 " Enter key will select a list item, if a list is visible
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
@@ -223,3 +250,5 @@ set path+=**
 highlight UselessWhitespace ctermbg=darkred
 match UselessWhitespace /\s\+$/
 autocmd ColorScheme * highlight UselessWhitespace ctermbg=darkred
+
+set bs=2
