@@ -76,7 +76,9 @@ if has("cscope")
         while s:dirs != []
                 let s:path = "/" . join(s:dirs, "/")
                 if (s:cscope == 0 && filereadable(s:path . "/cscope.out"))
+                        set nocscopeverbose
                         execute "cs add " . s:path . "/cscope.out " . s:path . " -v"
+                        set cscopeverbose
                         let s:cscope = 1
                 endif
 
@@ -173,7 +175,7 @@ nnoremap <C-g> :call ToggleFileFolds()<CR>
 inoremap <C-g> <esc>:call ToggleFileFolds()<CR>i
 " Make [[ go a little bit further back than the beginning accolade of
 " a function, hopefully finding the function name
-nnoremap <silent> [[ [[:call search('^[[:alpha:]_]', 'bc')<CR>
+nnoremap <silent> [[ [[mn:call search('^[[:alpha:]_]', 'bc')<CR>'n
 " Go to previous buffer when deleting the buffer in stead of killing the
 " current split (or tab)
 nnoremap <silent> <leader>b :bp\|bd#<CR>
@@ -192,7 +194,41 @@ inoremap <silent> <C-w>j <C-o><C-w>j
 inoremap <silent> <C-w>k <C-o><C-w>k
 inoremap <silent> <C-w>l <C-o><C-w>l
 
-function ToggleFileFolds()
+" Comment/uncomment convenience
+nnoremap <silent> <C-S-C> :call ToggleComment()<CR>
+vnoremap <silent> <C-S-C> :call ToggleComment()<CR>gv
+
+function! ToggleComment() range
+        " If the first line is not lead by the // comment, comment the lines
+        if (match(getline(a:firstline), '^\s*//') == -1)
+                execute a:firstline . ',' . a:lastline . 's,^\(\s*\),\1//,'
+        else
+                execute a:firstline . ',' . a:lastline . 's,^\(\s*\)//,\1,'
+        endif
+endfunction
+
+" Helper function to figure values of macros in enums
+" If an 'enum' is not found at the start of the line, will display the current
+" line number
+function! EnumValue() range
+        let l:enumStart = search('^enum.\+{', 'bnW') + 1
+        let l:lastEndBracket = search('}', 'bnW') + 1
+
+        if (l:lastEndBracket >= l:enumStart)
+                echo "Not in an enum"
+                return
+        endif
+
+        for l:line in range(a:firstline, a:lastline)
+        let l:lineStr = getline(l:line)
+        let l:trimmedLine = matchstr(l:lineStr, '[a-zA-Z0-9_]\+')
+                echo l:trimmedLine . ' -> ' . (l:line - l:enumStart)
+        endfor
+endfunction
+
+
+" Helper function to toggle all folds at file level
+function! ToggleFileFolds()
         if &foldlevel == 0
                 normal zR
         else
@@ -226,8 +262,8 @@ set number relativenumber
 set colorcolumn=80
 
 " Aid to help with hex editing
-command -bar Hex call ToggleHex()
-function ToggleHex()
+command! -bar Hex call ToggleHex()
+function! ToggleHex()
         if !exists("b:editHex") || !b:editHex
                 let b:editHex=1
                 %!xxd -g1
@@ -237,7 +273,7 @@ function ToggleHex()
         endif
 endfunction
 
-command -bar GitBlame execute '!git blame "%" -L ' . line(".") . ',' . line(".")
+command! -bar GitBlame execute '!git blame "%" -L ' . line(".") . ',' . line(".")
 nnoremap <leader>g :GitBlame<CR>
 
 " Enter key will select a list item, if a list is visible
