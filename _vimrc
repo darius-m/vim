@@ -173,9 +173,6 @@ inoremap <C-f> <esc>zc
 " if used in insert mode, first return to normal mode
 nnoremap <C-g> :call ToggleFileFolds()<CR>
 inoremap <C-g> <esc>:call ToggleFileFolds()<CR>i
-" Make [[ go a little bit further back than the beginning accolade of
-" a function, hopefully finding the function name
-nnoremap <silent> [[ [[mn:call search('^[[:alpha:]_]', 'bc')<CR>'n
 " Go to previous buffer when deleting the buffer in stead of killing the
 " current split (or tab)
 nnoremap <silent> <leader>b :bp\|bd#<CR>
@@ -260,6 +257,11 @@ set mouse=i
 set completeopt=longest,menuone
 set number relativenumber
 set colorcolumn=80
+
+" highlight as the search phrase is entered
+set incsearch
+" Keep the current line 10 lines from top/bottom
+set scrolloff=10
 
 " Aid to help with hex editing
 command! -bar Hex call ToggleHex()
