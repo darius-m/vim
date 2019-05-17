@@ -276,9 +276,6 @@ nnoremap <leader>g :GitBlame<CR>
 " Enter key will select a list item, if a list is visible
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
-" Enable recursive search
-" set path+=**
-
 " Highlight trailing whitespaces
 highlight UselessWhitespace ctermbg=darkred
 match UselessWhitespace /\s\+$/
