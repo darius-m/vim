@@ -95,7 +95,7 @@ if has("cscope")
         endwhile
 
         set csto=1	" use cscope first, then ctags
-        set nocst	" Don't only search cscope
+        set cst		" Use cstag instead of tag (search both cscope and tags)
         set csverb	" Make cs verbose
 
         nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
