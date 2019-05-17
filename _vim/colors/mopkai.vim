@@ -5,11 +5,6 @@
 " Note: Based on the molokai theme by Tomas Restrepo
 "
 
-if exists('g:loaded_mopkai')
-    finish
-endif
-let g:loaded_mopkai = 1
-
 set background=dark
 hi clear
 let g:colors_name='mopkai'
@@ -133,7 +128,7 @@ if has('nvim') || !has('gui_running')
     if get(g:, 'mopkai_is_not_set_normal_ctermbg', 0)
         hi Normal          ctermfg=253
     else
-        hi Normal          ctermfg=253 ctermbg=233
+        hi Normal          ctermfg=253 ctermbg=232
     endif
 
     hi Comment         ctermfg=103
@@ -206,10 +201,10 @@ if has('nvim') || !has('gui_running')
     hi CursorLine                  ctermbg=234 cterm=none
     hi CursorLineNr    ctermfg=208             cterm=none
 
-    hi DiffAdd                     ctermbg=24
-    hi DiffChange      ctermfg=181 ctermbg=239
-    hi DiffDelete      ctermfg=162 ctermbg=53
-    hi DiffText                    ctermbg=102 cterm=bold
+    hi DiffAdd                     ctermbg=17
+    hi DiffChange                  ctermbg=53
+    hi DiffDelete                  ctermbg=52
+    hi DiffText                    ctermbg=90 cterm=bold
 
     hi Directory       ctermfg=118               cterm=bold
     hi ErrorMsg        ctermfg=199 ctermbg=16    cterm=bold

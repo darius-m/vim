@@ -94,8 +94,8 @@ if has("cscope")
                 let s:dirs = s:dirs[:-2]
         endwhile
 
-        set csto=0	" Use cscope first, then ctags
-        set cst		" Only search cscope
+        set csto=1	" use cscope first, then ctags
+        set nocst	" Don't only search cscope
         set csverb	" Make cs verbose
 
         nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -145,18 +145,13 @@ nnoremap <F10> :ccl<CR>
 
 nnoremap - gT
 nnoremap = gt
-nnoremap <F2> gT
-nnoremap <F3> gt
-
-nnoremap <F5> :cp<CR>
-nnoremap <F6> :cn<CR>
 
 nnoremap <C-s> nop
 
 vnoremap <C-k> :<C-u>silent! '<,'>m '<-2<CR>`[V`]
 vnoremap <C-j> :<C-u>silent! '<,'>m '>+1<CR>`[V`]
 
-nnoremap <silent> <leader>, :noh<cr>
+nnoremap <silent><leader>, :noh<cr>
 
 " Set folding options
 autocmd ColorScheme * highlight Folded ctermbg=black ctermfg=41
@@ -217,8 +212,8 @@ function! EnumValue() range
         endif
 
         for l:line in range(a:firstline, a:lastline)
-        let l:lineStr = getline(l:line)
-        let l:trimmedLine = matchstr(l:lineStr, '[a-zA-Z0-9_]\+')
+                let l:lineStr = getline(l:line)
+                let l:trimmedLine = matchstr(l:lineStr, '[a-zA-Z0-9_]\+')
                 echo l:trimmedLine . ' -> ' . (l:line - l:enumStart)
         endfor
 endfunction
@@ -253,7 +248,7 @@ augroup END
 set t_Co=256
 colorscheme mopkai
 
-set mouse=i
+set mouse=
 set completeopt=longest,menuone
 set number relativenumber
 set colorcolumn=80
@@ -282,7 +277,7 @@ nnoremap <leader>g :GitBlame<CR>
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
 
 " Enable recursive search
-set path+=**
+" set path+=**
 
 " Highlight trailing whitespaces
 highlight UselessWhitespace ctermbg=darkred
@@ -290,3 +285,117 @@ match UselessWhitespace /\s\+$/
 autocmd ColorScheme * highlight UselessWhitespace ctermbg=darkred
 
 set bs=2
+
+" Get color of a group
+function! GetHighlightColor(group, what)
+	let l:highlight = execute('hi ' . a:group)
+
+	for item in split(l:highlight, '\s\+')
+		if match(item, a:what . '=') != -1
+			return split(item, '=')[1]
+		endif
+	endfor
+
+	return ''
+endfunction
+
+" Set highlight color to group for 'what' parameter
+function! SetColor(group, color, what)
+	if (a:color != '')
+		exec 'hi ' . a:group . ' ' . a:what . '=' . a:color
+		echo a:what . '=' . a:color . ' set for color group ' . a:group
+	endif
+endfunction
+
+" Restore colors to their initial values - called when changing color groups
+function! RestoreColors()
+	let l:highlightGroup = s:highlightGroups[s:highlightIdx]
+	call SetColor(l:highlightGroup, s:groupColorBG, 'ctermbg')
+	call SetColor(l:highlightGroup, s:groupColorFG, 'ctermfg')
+endfunction
+
+" Initialize highlightGroups array if not yet defined
+if !exists('s:highlightGroups')
+	let highlights = execute('highlight')
+	let hlGroups = substitute(highlights, '\s\+[^\n]*', '', 'g')
+	let s:highlightGroups = split(hlGroups)
+endif
+
+" Initialize current cycle color if not defined
+if !exists('s:crtcol')
+	let s:crtcol = 0
+endif
+
+" Initialize index of color in highlightGroups array
+if !exists('s:highlightIdx')
+	let s:highlightIdx = 0
+	let highlightGroup = s:highlightGroups[s:highlightIdx]
+	let s:groupColorBG = GetHighlightColor(highlightGroup, 'ctermbg')
+	let s:groupColorFG = GetHighlightColor(highlightGroup, 'ctermfg')
+endif
+
+" Highlight background of 'highlightIdx'th group using the next color relative
+" to 'crtcol'
+function! TryNextColor()
+	if (s:crtcol < 255)
+		let s:crtcol = s:crtcol + 1
+	endif
+
+	call SetColor(s:highlightGroups[s:highlightIdx], s:crtcol, 'ctermbg')
+endfunction
+
+" Highlight background of 'highlightIdx'th group using the previous color
+" relative to 'crtcol'
+function! TryPrevColor()
+	if (s:crtcol > 0)
+		let s:crtcol = s:crtcol - 1
+	endif
+
+	call SetColor(s:highlightGroups[s:highlightIdx], s:crtcol, 'ctermbg')
+endfunction
+
+" Select next color group relative to 'highlightIdx'. Reset colors for
+" previously selected group first, set color to 0 for the new group
+function! TryNextColorGroup()
+	" Restore colors for current group
+	call RestoreColors()
+
+	if (s:highlightIdx < len(s:highlightGroups) - 1)
+		let s:highlightIdx = s:highlightIdx + 1
+	endif
+
+	" Save colors for next group
+	let l:highlightGroup = s:highlightGroups[s:highlightIdx]
+	let s:groupColorBG = GetHighlightColor(l:highlightGroup, 'ctermbg')
+	let s:groupColorFG = GetHighlightColor(l:highlightGroup, 'ctermfg')
+
+	let s:crtcol = 0
+	call SetColor(s:highlightGroups[s:highlightIdx], s:crtcol, 'ctermbg')
+	echo 'Current color group: ' . l:highlightGroup
+endfunc
+
+" Select previous color group relative to 'highlightIdx'. Reset colors for
+" previously selected group first, set color to 0 for the new group
+function! TryPrevColorGroup()
+	" Restore colors for current group
+	call RestoreColors()
+
+	if (s:highlightIdx > 0)
+		let s:highlightIdx = s:highlightIdx - 1
+	endif
+
+	" Save colors for next group
+	let l:highlightGroup = s:highlightGroups[s:highlightIdx]
+	let s:groupColorBG = GetHighlightColor(l:highlightGroup, 'ctermbg')
+	let s:groupColorFG = GetHighlightColor(l:highlightGroup, 'ctermfg')
+
+	let s:crtcol = 0
+	call SetColor(s:highlightGroups[s:highlightIdx], s:crtcol, 'ctermbg')
+	echo 'Current color group: ' . l:highlightGroup
+endfunc
+
+" Convenience mappings for functions to cycle through colors
+nnoremap <silent><F7> :call TryPrevColor()<CR>
+nnoremap <silent><F8> :call TryNextColor()<CR>
+nnoremap <silent><F5> :call TryPrevColorGroup()<CR>
+nnoremap <silent><F6> :call TryNextColorGroup()<CR>
