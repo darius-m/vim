@@ -106,6 +106,7 @@ if has("cscope")
         nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
         nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
         nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+        nmap <C-\>a :cs find a <C-R>=expand("<cword>")<CR><CR>
 
         nmap <C-\|>s :vert scs find s <C-R>=expand("<cword>")<CR><CR>
         nmap <C-\|>g :vert scs find g <C-R>=expand("<cword>")<CR><CR>
@@ -115,6 +116,7 @@ if has("cscope")
         nmap <C-\|>f :vert scs find f <C-R>=expand("<cfile>")<CR><CR>
         nmap <C-\|>i :vert scs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
         nmap <C-\|>d :vert scs find d <C-R>=expand("<cword>")<CR><CR>
+        nmap <C-\|>a :vert scs find a <C-R>=expand("<cword>")<CR><CR>
 
         " Open a quickfix window for the following queries.
         "set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
@@ -275,6 +277,9 @@ nnoremap <leader>g :GitBlame<CR>
 
 " Enter key will select a list item, if a list is visible
 inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
+
+" Enable recursive search
+" set path+=**
 
 " Highlight trailing whitespaces
 highlight UselessWhitespace ctermbg=darkred
