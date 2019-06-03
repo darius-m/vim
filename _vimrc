@@ -1,6 +1,8 @@
 " Force use of utf-8
 set encoding=utf-8
 
+syntax on
+
 " Add modeline functionality -- it's disabled by default on some distros
 set modeline
 
@@ -14,7 +16,7 @@ autocmd FileType java		setlocal tw=78 cin foldmethod=marker
 autocmd FileType c,cpp		setlocal tw=80 cindent noexpandtab
 autocmd FileType python		setlocal autoindent expandtab sts=4 sw=4 tw=78
 autocmd FileType haskell	setlocal tw=72 sw=2 sts=2 et
-autocmd FileType tex		setlocal tw=72 sw=2 sts=2 ai et noexpandtab spell spelllang=en_us
+autocmd FileType tex		call SetTexSettings()
 " 'linebreak' won't work without 'nolist'
 autocmd FileType creole		setlocal tw=0 fo=t wrap nolist linebreak
 autocmd FileType mail		setlocal tw=72 fo=tql
@@ -36,6 +38,18 @@ autocmd BufRead,BufNewFile *.asm setlocal ft=asm
 autocmd BufRead,BufNewFile Makefile.* setlocal ft=make
 autocmd BufRead,BufNewFile SConstruct* setlocal ft=python tw=0
 autocmd BufRead,BufNewFile SConscript* setlocal ft=python tw=0
+
+function! SetTexSettings()
+	setlocal tw=72
+	setlocal sw=2
+	setlocal sts=2
+	setlocal ai
+	setlocal et
+	setlocal noexpandtab
+	setlocal spell
+	setlocal spelllang=en_us
+	syntax spell toplevel
+endfunction
 
 " Use vundle for plugin management
 set nocompatible
@@ -139,8 +153,6 @@ set splitright
 set hidden
 set smartcase
 set ignorecase
-
-syntax on
 
 nnoremap <F9> :cwindow<CR>
 nnoremap <F10> :ccl<CR>
