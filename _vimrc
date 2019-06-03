@@ -243,7 +243,13 @@ function! ToggleFileFolds()
 endfunction
 
 " Align subsequent lines to open parantheses in C sources.  Via andradaq.
-set cinoptions=(0,W4
+" Values:
+" (0 -> align next line with the last unclosed parentheses
+" W4 -> if the open parentheses is the last charater on the line, indent next
+"     > line 4 characters to the right
+" :0 -> align cases in switch clauses with the 'switch'
+" l1 -> align subsequent lines with the case statement, not what follows it
+set cinoptions=(0,W4,:0,l1
 
 " Restore position inside previously opened file.  From vim.wikia.
 function! ResCur()
